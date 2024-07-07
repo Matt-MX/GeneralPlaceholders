@@ -3,6 +3,7 @@ package com.mattmx.general
 import com.mattmx.ktgui.GuiManager
 import com.mattmx.ktgui.commands.declarative.arg.impl.greedyStringArgument
 import com.mattmx.ktgui.commands.declarative.arg.impl.longArgument
+import com.mattmx.ktgui.commands.declarative.arg.impl.playerArgument
 import com.mattmx.ktgui.commands.declarative.arg.impl.stringArgument
 import com.mattmx.ktgui.commands.declarative.div
 import com.mattmx.ktgui.papi.placeholder
@@ -39,10 +40,7 @@ class GeneralPlaceholdersPlugin : JavaPlugin() {
 
                 placeholder("instant" / javaInstant / textIfNegative) {
                     val result = runCatching {
-                        val event = DateTimeFormatter.ISO_ZONED_DATE_TIME.parse(javaInstant(), Instant::from)
-                        val now: Instant = Instant.now()
-                        val diff = Duration.between(now, event)
-
+                        val diff = difNow(parseInstant(javaInstant()))
                         if (diff.isNegative) textIfNegative() else diff.pretty()
                     }
 
@@ -54,16 +52,13 @@ class GeneralPlaceholdersPlugin : JavaPlugin() {
                 id("since")
 
                 placeholder("millis" / epochMillis) {
-                    val timeUntil = Duration.ofMillis(epochMillis() - System.currentTimeMillis())
-                    if (timeUntil.isNegative) textIfNegative() else timeUntil.pretty()
+                    val diff = Duration.ofMillis(epochMillis() - System.currentTimeMillis())
+                    Duration.ofMillis(abs(diff.toMillis())).pretty()
                 }
 
                 placeholder("instant" / javaInstant) {
                     val result = runCatching {
-                        val event = DateTimeFormatter.ISO_ZONED_DATE_TIME.parse(javaInstant(), Instant::from)
-                        val now: Instant = Instant.now()
-                        val diff = Duration.between(now, event)
-
+                        val diff = difNow(parseInstant(javaInstant()))
                         Duration.ofMillis(abs(diff.toMillis())).pretty()
                     }
 
@@ -72,6 +67,10 @@ class GeneralPlaceholdersPlugin : JavaPlugin() {
             }
         }
     }
+
+    private fun dif(first: Instant, second: Instant): Duration = Duration.between(first, second)
+    private fun difNow(time: Instant) = dif(Instant.now(), time)
+    private fun parseInstant(str: String): Instant = DateTimeFormatter.ISO_DATE_TIME.parse(str, Instant::from)
 
     companion object {
         private lateinit var instance: GeneralPlaceholdersPlugin
