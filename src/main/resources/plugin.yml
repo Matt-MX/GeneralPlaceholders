@@ -3,3 +3,7 @@ main: ${main}
 version: ${version}
 author: ${author}
 api-version: 1.17
+
+depend:
+  - PlaceholderAPI
+  - KtGUI

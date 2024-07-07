@@ -27,11 +27,14 @@ val paper_version: String by project
 repositories {
     mavenCentral()
     maven("https://maven.pvphub.me/releases")
+    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
 }
 
 dependencies {
     testImplementation(kotlin("test"))
     compileOnly(kotlin("stdlib"))
+
+    compileOnly("me.clip:placeholderapi:2.11.6")
 
     compileOnly("com.mattmx:ktgui:${ktgui_version}")
     paperweight.paperDevBundle(paper_version)
